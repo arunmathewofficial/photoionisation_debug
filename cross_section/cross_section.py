@@ -1,4 +1,5 @@
 from data import photo_cross_section_data
+from data import ionization_threshold
 import math
 import logging
 
@@ -16,8 +17,11 @@ class photo_xsection:
         y0 = xsection_obj.get_xsection_parameters(species).y0
         y1 = xsection_obj.get_xsection_parameters(species).y1
 
-        # ionisation_energy = atomic_physics_data.get_ionisation_energy(species)
         # if E < ionisation_energy: return 0.0
+        threshold_obj = ionization_threshold
+        Eth = threshold_obj.get_ionisation_energy(species).ionization_energy
+        if E < Eth: return 0.0
+
 
         if E > fit_emax:
             logging.warning(f"multi-ion photo-xsection: energy exceeds fit range for {species}, E: {E} eV")

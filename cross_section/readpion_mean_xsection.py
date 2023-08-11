@@ -1,29 +1,34 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
-# Read the text file
-with open('/home/mathew/Desktop/pion/photo_ionisation/MPV10-photo-xsec-table/mean-photo-xsection.txt', 'r') as file:
-    lines = file.readlines()
 
-# Extract the labels and data
-labels = lines[1].split()[1:]
-data = np.genfromtxt(lines[2:], delimiter=' ', usecols=range(2, len(labels) + 2))
+def read_data(filename):
+    # Read the content of the text file
+    with open(filename, 'r') as file:
+        lines = file.readlines()
 
-# Plotting a separate histogram for each species
-for i in range(len(labels)):
-    species = labels[i]
-    species_data = data[:, i]
+    # Initialize an empty dictionary to store data columns
+    data_dict = {}
 
-    # Plot histogram
-    plt.figure()
-    plt.hist(species_data, bins=50, color='skyblue', edgecolor='black')
-    plt.xlabel('Cross-section (Mb)')
-    plt.ylabel('Frequency')
-    plt.title(f'Histogram for {species}')
-    plt.grid(True)
+    # Extract labels from the comments
+    for line in lines:
+        if line.startswith('#NAME:'):
+            labels = line.split()[2:]  # Splitting by whitespace and removing the '#NAME:' prefix
+            labels = ["Bin_Min"] + labels  # Include "Bin_Min" as the first label
+            break
 
-    # Save the plot
-    plt.savefig(f'histogram_{species}.png')
+    species = labels[2:]  # get all the species
 
-    # Display the plot
-    plt.show()
+    # Extract data from the lines after the '#DATA:' comment
+    data_lines = [line for line in lines if not line.startswith('#')]
+    for line in data_lines:
+        values = line.split()
+        for label, value in zip(labels, values):
+            value = float(value)
+            if label not in data_dict:
+                data_dict[label] = []
+            data_dict[label].append(value)
+
+
+    return {"species": species, "names": labels, "dict" :data_dict}
