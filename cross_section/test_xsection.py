@@ -5,10 +5,10 @@ from readpion_mean_xsection import read_data
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 # read the xsection data and return label, species name and data dictionary
-pion_xsection_data = read_data("/home/tony/Desktop/pion/photoionisation_test/MPV10-photo-tables/mean-photo-xsection.txt")
+pion_xsection_data = read_data("/home/mathew/Desktop/pion/photoionisation_test/MPV10-photo-tables/mean-photo-xsection.txt")
 species = np.array(pion_xsection_data['species'])
 # read the weight data and return label, species name and data dictionary
-pion_weight_data = read_data("/home/tony/Desktop/pion/photoionisation_test/MPV10-photo-tables/bin-weights.txt")
+pion_weight_data = read_data("/home/mathew/Desktop/pion/photoionisation_test/MPV10-photo-tables/bin-weights.txt")
 
 # Customize the formatting options
 np.set_printoptions(threshold=np.inf)
@@ -20,11 +20,19 @@ min_energy = pion_xsection_data["dict"]["Bin_Min"][0]
 max_energy = pion_xsection_data["dict"]["Bin_Max"][-1]
 # make energy array of 100 points within this limits
 energy_array = np.linspace(min_energy, max_energy, 100)
-# make histogram energy points
-energy_bins = pion_xsection_data["dict"]["Bin_Min"]
-#energy_bins.append(max_energy)
+# make histogram energy bins
+energy_bins = []
+for i in range(len(pion_xsection_data["dict"]["Bin_Min"])):
+    bin = []
+    bin.append(pion_xsection_data["dict"]["Bin_Min"][i])
+    bin.append(pion_xsection_data["dict"]["Bin_Max"][i])
+    energy_bins.append(bin)
+    del bin
 
-print(energy_bins)
+# Calculate bin centers from edge values
+bin_centers = [(edge[0] + edge[1]) / 2 for edge in energy_bins]
+# Calculate bar widths
+bar_widths = [edge[1] - edge[0] for edge in energy_bins]
 
 for species in pion_xsection_data["species"]:
 
@@ -37,8 +45,8 @@ for species in pion_xsection_data["species"]:
     species_xsection_bin_Mb = [x * 1.0E+18 for x in species_xsection_bin]
     nbins = len(species_xsection_bin_Mb)
 
-    y_min = min(species_xsection_bin_Mb)
-    y_max = max(species_xsection_bin_Mb)
+    y_min = min(species_xsection_array)
+    y_max = max(species_xsection_array)
 
 
     # Create a figure with subplots
@@ -61,9 +69,9 @@ for species in pion_xsection_data["species"]:
     ax2 = ax1.twinx()
 
     # Plot the bar
-    #ax2.hist(species_xsection_bin_Mb, bins=nbins, color='blue', alpha=0.7, label='Histogram')
-    ax2.bar(energy_bins, species_xsection_bin_Mb, width=energy_bins, align='edge', color='orange',
+    ax2.bar(bin_centers, species_xsection_bin_Mb, width=bar_widths, align='center', color='orange',
             alpha=0.5, label="MPv10-PION")
+
     ax2.set_xlabel("Energy, eV")
     ax2.set_ylabel("MPV10 Cross section, Mb")
     ax2.xaxis.set_minor_locator(AutoMinorLocator())
@@ -74,7 +82,7 @@ for species in pion_xsection_data["species"]:
 
     plt.tight_layout()  # To prevent overlapping of subplots
     # Show the combined plot
-    image = "/home/tony/Desktop/pion/photoionisation_test/debug_plots/xsection_" + species + ".png"
+    image = "/home/mathew/Desktop/pion/photoionisation_test/debug_plots/xsection_" + species + ".png"
     print("saving " + image)
     plt.savefig(image, dpi=200)
     plt.close(fig)
