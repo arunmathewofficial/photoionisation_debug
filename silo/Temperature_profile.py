@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from pypion.argparse_command import InputValues
 from SiloReader import GetSiloData
 from OneDPlotter import Plot_Function
+import numpy as np
 
 Inputs = InputValues()
 timeline = Inputs.time_dicts
@@ -18,14 +19,16 @@ for frame in timeline:
 
     # density = object.get_parameter('Density')
     Temperature = object.get_parameter('Temperature')
+    log_Temperature = np.log10(Temperature)
     radius = object.get_radial_coordinate()
+
 
     fig = plt.figure(figsize=(4, 3))
     plots = [Temperature]  # Create a new list for each plot
     Plot_Function().Single_Xaxis_Plotter(fig, radius, plots,
                                          ["radius (cm)", r"${\rm T (K)}$"], [])
     #plt.ylim([-15, -5])
-
+    plt.ylim([0.0, 20000])
     # Saving the plot
     imagefile = "%s%s_%s.png" % (OutputDir, Inputs.img_file, str(imagefile_count).zfill(3))
     plt.savefig(imagefile, bbox_inches='tight', dpi=300)
