@@ -20,7 +20,7 @@ class Plot_Function:
 
         ax = fig.add_subplot()
         for func in functions:
-            ax.plot(x_datapoints, func, label=func[1], linewidth=0.6)
+            ax.plot(x_datapoints, func, label=func[1], linewidth=0.6, marker='o', markersize=2)
         ax.set(xlabel = axislabels[0], ylabel = axislabels[1])
         if(axislimit == []):
             pass
