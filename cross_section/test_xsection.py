@@ -82,7 +82,7 @@ for species in pion_xsection_data["species"]:
 
     plt.tight_layout()  # To prevent overlapping of subplots
     # Show the combined plot
-    image = "/home/mathew/Desktop/pion/photoionisation_test/debug_plots/xsection_" + species + ".png"
+    image = "/home/mathew/Desktop/pion/photoionisation_test/xsection_plots/xsection_" + species + ".png"
     print("saving " + image)
     plt.savefig(image, dpi=200)
     plt.close(fig)
