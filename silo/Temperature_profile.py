@@ -22,14 +22,14 @@ for frame in timeline:
     log_Temperature = np.log10(Temperature)
     radius = object.get_radial_coordinate()
 
-
+    radius = radius / 3.086e+18 # radius in parsec
     fig = plt.figure(figsize=(4, 3))
     plots = [Temperature]  # Create a new list for each plot
     Plot_Function().Single_Xaxis_Plotter(fig, radius, plots,
                                          ["radius (cm)", r"${\rm T (K)}$"], [])
     #plt.ylim([-15, -5])
     #plt.ylim([0.0, 20000])
-    plt.xlim([0.0, 1.2e19])
+    plt.xlim([0, 6])
     # Saving the plot
     imagefile = "%s%s_%s.png" % (OutputDir, Inputs.img_file, str(imagefile_count).zfill(3))
     plt.savefig(imagefile, bbox_inches='tight', dpi=300)
