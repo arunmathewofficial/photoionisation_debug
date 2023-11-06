@@ -3,7 +3,7 @@
 import sys
 #sys.path.insert(0,"/home/jm/code/pypion/silo/lib")
 #sys.path.insert(0,"/home/jm/code/pypion/Library")
-sys.path.insert(0,"/home/tony/.local/silo/lib/")
+sys.path.insert(0,"/home/mathew/.local/silo/lib/")
 #sys.path.insert(0,"/mnt/local/jm/pion_python/src/pypion/")
 #sys.path.insert(0,"/home/jmackey/code/pypion/silo/lib")
 #sys.path.insert(0,"/home/jmackey/code/pypion/Library")
@@ -50,6 +50,8 @@ path = args.path
 fbase = args.fbase
 img_path = args.img_path
 
+mH = 1.6735575e-24 # in gms
+
 files = sorted(glob.glob(path+"/"+fbase+".*.silo"))
 
 for i in range(len(files)):
@@ -79,11 +81,15 @@ for i in range(len(files)):
   vx = dataio.get_1Darray("VelocityX")['data'][0]
   temperature = dataio.get_1Darray("Temperature")['data'][0]
 
+
   # chemical species
   # HYDROGEN
   X_H = dataio.get_1Darray("Tr000_X_H")['data'][0]
   H1p = dataio.get_1Darray("Tr009_H1p")['data'][0] / X_H
   H0 = np.ones_like(H1p) - H1p
+  # hydrogen number density
+  nH = X_H * rho / mH
+
   # HELIUM
   X_He = dataio.get_1Darray("Tr001_X_He")['data'][0]
   He1p = dataio.get_1Darray("Tr010_He1p")['data'][0] / X_He
@@ -112,11 +118,13 @@ for i in range(len(files)):
 
 
 # plot figures *************************************************************
-  fig, axs = plt.subplots(2, 1, figsize=(12, 8))
+  fig, axs = plt.subplots(2, 1, figsize=(16, 8))
 
-  axs[0].plot(x, np.log10(vx*10e-6),"b",label="$v_r\, \left(10 \, \mathrm{km\,s}^{-1}\\right)$")
-  axs[0].plot(x, np.log10(temperature*1.0e-5),"r",label="$T\, (10^5\,\mathrm{K})$")
-  axs[0].plot(x, np.log10(rho*1.0e+22),"g",label=r"$\rho \, (10^{-22}\,g/cm^3)$")
+  axs[0].plot(x, np.log10(vx*10e-6),"C0",label="$v_r\, \left(10 \, \mathrm{km\,s}^{-1}\\right)$")
+  axs[0].plot(x, np.log10(temperature*1.0e-5),"C3",label="$T\, (10^5\,\mathrm{K})$")
+  axs[0].plot(x, np.log10(rho*1.0e+24),"g--",label=r"$\rho \, (10^{-24}\,g/cm^3)$")
+  axs[0].plot(x, np.log10(nH),"m--",label=r"$n_H \, (cm^{-3})$")
+
 
   axs[0].set_xlabel('Radius (pc)')
   axs[0].set_ylabel('Flow quantities')
@@ -125,7 +133,7 @@ for i in range(len(files)):
   #axs[0].tick_params(labelsize=16)
   axs[0].grid()
   #axs[0].legend(fontsize=12, loc="lower right")
-  axs[0].legend(loc='upper left', bbox_to_anchor=(0.5, 1.15), ncol=10)
+  axs[0].legend(loc='upper left', bbox_to_anchor=(0.35, 1.15), ncol=10)
   s = "$\mathrm{time} = $" + f"{time:0.03f}"
   axs[0].text(0.3, 4.3, s, color="black", fontsize=14)
 
@@ -158,7 +166,7 @@ for i in range(len(files)):
   axs[1].set_xlabel('Radius (pc)')
   axs[1].set_ylabel('Ionisation Fraction')
   axs[1].grid()
-  axs[1].legend(loc='lower left', bbox_to_anchor=(0.0, -0.4), ncol=10)
+  axs[1].legend(loc='lower left', bbox_to_anchor=(0.15, -0.4), ncol=10)
 
 
 # Save images **************************************************************
