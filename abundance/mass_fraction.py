@@ -15,9 +15,9 @@ m_Fe = 9.2732796e-23
 
 #########################################################
 # given data
-print("Given density and relative abundance, calculate mass fractions")
+print("Given mass density and relative abundance, calculate mass fractions")
 # number denisty of hydrogen
-rho = 100 * m_H      #in units of g/cm^-3
+rho = 100.0 * m_H       #in units of g/cm^3
 # relative abundance
 a_He = - 1.0
 a_C  = - 3.6576
@@ -26,7 +26,7 @@ a_O  = - 3.4815
 a_Ne = - 4.3010
 a_S  = - 5.0458
 
-input = {'Density': [rho], 'a_He': [a_He], 'a_C': [a_C], 'a_N': [a_N], 'a_O': [a_O],
+input = {'rho': [rho], 'a_He': [a_He], 'a_C': [a_C], 'a_N': [a_N], 'a_O': [a_O],
           'a_Ne': [a_Ne], 'a_S': [a_S]}
 
 input_dataframe = pd.DataFrame(input, index=None)
@@ -43,6 +43,9 @@ frac_S  = 10**a_S
 
 # calculating number density of hydrogen.
 n_H = rho / (m_H + m_He*frac_He + m_C*frac_C + m_N*frac_N + m_O*frac_O + m_Ne*frac_Ne + m_S*frac_S)
+
+
+
 print("Hydrogen number density (in log): ", np.log10(n_H))
 n_He = frac_He * n_H
 n_C  = frac_C  * n_H
@@ -72,7 +75,6 @@ print("mass-fraction N  :" + f"{X_N:.5E}")
 print("mass-fraction O  :" + f"{X_O:.5E}")
 print("mass-fraction Ne :" + f"{X_Ne:.5E}")
 print("mass-fraction S  :" + f"{X_S:.5E}")
-
 
 Sum = X_H + X_He + X_C + X_N + X_O + X_Ne + X_S
 print("Sum of Mass fraction:", Sum)
