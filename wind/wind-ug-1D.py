@@ -19,6 +19,7 @@ from pypion.ReadData import ReadData
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
+from matplotlib.ticker import MultipleLocator
 #plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 #plt.rc('text', usetex=True)
 #plt.rc('font',**{'size': 20})
@@ -40,6 +41,8 @@ font.set_name('stixsans')
 font.set_style('italic')
 font.set_weight('light')
 font.set_size(12)
+
+plt.rcParams['font.family'] = 'Times New Roman'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("path", type=str)
@@ -64,7 +67,7 @@ for i in range(len(files)):
   Density = dataio.get_1Darray("Density")
   rho  = Density['data'][0]
   time = (Density['sim_time'] * u.s).to(u.yr)
-  print("time=",time)
+  print("Time=",time)
   xmax = (Density['max_extents'] * u.cm).to(u.pc)
   xmin = (Density['min_extents'] * u.cm).to(u.pc)
   ng  = dataio.ngrid()
@@ -118,58 +121,90 @@ for i in range(len(files)):
 
 
 # plot figures *************************************************************
-  fig, axs = plt.subplots(2, 1, figsize=(16, 8))
+  fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(16, 6), sharex=True)
 
-  axs[0].plot(x, np.log10(vx*10e-6),"C0",label="$v_r\, \left(10 \, \mathrm{km\,s}^{-1}\\right)$")
-  axs[0].plot(x, np.log10(temperature*1.0e-5),"C3",label="$T\, (10^5\,\mathrm{K})$")
-  axs[0].plot(x, np.log10(rho*1.0e+24),"g--",label=r"$\rho \, (10^{-24}\,g/cm^3)$")
-  axs[0].plot(x, np.log10(nH),"m--",label=r"$n_H \, (cm^{-3})$")
+  ax1.plot(x, np.log10(vx*10e-6),"C0",label="$ \log \, \left( \mathrm{v_r} / 10 \mathrm{km \, s}^{-1} \\right) $")
+  ax1.plot(x, np.log10(temperature*1.0e-5),"C3",label="$ \log \, (\mathrm{T}\, / 10^5\,\mathrm{K})$")
+  ax1.plot(x, np.log10(rho*1.0e+24),"g",label=r"$\log \, (\mathrm{\rho} \, / 10^{-24}\, \mathrm{g cm}^{-3})$")
+  ax1.plot(x, np.log10(nH),"m--",label=r"$\log \, (\mathrm{n_H} \, / \mathrm{cm}^{-3})$")
 
 
-  axs[0].set_xlabel('Radius (pc)')
-  axs[0].set_ylabel('Flow quantities')
-  axs[0].set_ylim(-4, 4)  # Set the y-limits for the first subplot
-  axs[0].set_xlim(-1, 20)
+  #ax1.set_xlabel('Radius (pc)')
+  ax1.set_ylabel('Flow quantities')
+  ax1.set_ylim(-4, 4)  # Set the y-limits for the first subplot
+  ax1.set_xlim(0.0, 12.5)
   #axs[0].tick_params(labelsize=16)
-  axs[0].grid()
+  #axs[0].grid()
   #axs[0].legend(fontsize=12, loc="lower right")
-  axs[0].legend(loc='upper left', bbox_to_anchor=(0.35, 1.15), ncol=10)
-  s = "$\mathrm{time} = $" + f"{time:0.03f}"
-  axs[0].text(0.3, 4.3, s, color="black", fontsize=14)
+  ax1.legend(loc='upper left', bbox_to_anchor=(0.035, 0.82), ncol=2,frameon=False)
+  s = "$\mathrm{Time}: $" + f"{time:0.02f}"
+  ax1.text(9.5, 2.5, s, color="black", fontsize=14)
+  ax1.tick_params(axis='both', which='both', direction='in')
+
 
   # Hydrogen
-  axs[1].plot(x, H0,  label="$\mathrm{H}$")
-  axs[1].plot(x, H1p, label="$\mathrm{H}^{1+}$")
+  ax2.plot(x, H0,  label="$\mathrm{H}$")
+  ax2.plot(x, H1p, label="$\mathrm{H}^{1+}$")
   # Helium
-  axs[1].plot(x, He0, label="$\mathrm{He}$")
-  axs[1].plot(x, He1p, label="$\mathrm{He}^{1+}$")
-  axs[1].plot(x, He2p, label="$\mathrm{He}^{2+}$")
+  ax2.plot(x, He0, label="$\mathrm{He}$")
+  ax2.plot(x, He1p, label="$\mathrm{He}^{1+}$")
+  ax2.plot(x, He2p, label="$\mathrm{He}^{2+}$")
   # Carbon
-  axs[1].plot(x, C0,  label="$\mathrm{C}$")
-  axs[1].plot(x, C1p, label="$\mathrm{C}^{1+}$")
-  axs[1].plot(x, C2p, label="$\mathrm{C}^{2+}$")
-  axs[1].plot(x, C3p, label="$\mathrm{C}^{3+}$")
-  axs[1].plot(x, C4p, label="$\mathrm{C}^{4+}$")
-  axs[1].plot(x, C5p, "--", label="$\mathrm{C}^{5+}$")
-  axs[1].plot(x, C6p, "--", label="$\mathrm{C}^{6+}$")
-  # Nitrogen
-  axs[1].plot(x, N0,  "--", label="$\mathrm{N}$")
-  axs[1].plot(x, N1p, "--", label="$\mathrm{N}^{1+}$")
-  axs[1].plot(x, N2p, "--", label="$\mathrm{N}^{2+}$")
-  axs[1].plot(x, N3p, "--", label="$\mathrm{N}^{3+}$")
-  axs[1].plot(x, N4p, "--", label="$\mathrm{N}^{4+}$")
-  axs[1].plot(x, N5p, "--", label="$\mathrm{N}^{5+}$")
-  axs[1].plot(x, N6p, "--", label="$\mathrm{N}^{6+}$")
-  axs[1].plot(x, N7p, "--", label="$\mathrm{N}^{7+}$")
+  ax2.plot(x, C0,  label="$\mathrm{C}$")
+  ax2.plot(x, C1p, label="$\mathrm{C}^{1+}$")
+  ax2.plot(x, C2p, label="$\mathrm{C}^{2+}$")
+  ax2.plot(x, C3p, label="$\mathrm{C}^{3+}$")
+  ax2.plot(x, C4p, label="$\mathrm{C}^{4+}$")
+  ax2.plot(x, C5p, "--", label="$\mathrm{C}^{5+}$")
+  ax2.plot(x, C6p, "--", label="$\mathrm{C}^{6+}$")
 
-  axs[1].set_xlim(-1, 20)
-  axs[1].set_xlabel('Radius (pc)')
-  axs[1].set_ylabel('Ionisation Fraction')
-  axs[1].grid()
-  axs[1].legend(loc='lower left', bbox_to_anchor=(0.15, -0.4), ncol=10)
+  legend1 = ax2.legend(loc='lower left', bbox_to_anchor=(0.03, 0.45), ncol=5, frameon=False)
+  plt.gca().add_artist(legend1)
+
+  # Nitrogen
+  ax2.plot(x, N0, "--", label="$\mathrm{N}$")
+  ax2.plot(x, N1p, "--", label="$\mathrm{N}^{1+}$")
+  ax2.plot(x, N2p, "--", label="$\mathrm{N}^{2+}$")
+  ax2.plot(x, N3p, "--", label="$\mathrm{N}^{3+}$")
+  ax2.plot(x, N4p, "--", label="$\mathrm{N}^{4+}$")
+  ax2.plot(x, N5p, "--", label="$\mathrm{N}^{5+}$")
+  ax2.plot(x, N6p, "--", label="$\mathrm{N}^{6+}$")
+  ax2.plot(x, N7p, "--", label="$\mathrm{N}^{7+}$")
+
+
+
+  legend2 = ax2.legend(loc='upper right')
+
+  labels_to_remove = ['$\mathrm{H}$', '$\mathrm{H}^{1+}$', '$\mathrm{He}$', '$\mathrm{He}^{1+}$',
+                      '$\mathrm{He}^{2+}$', '$\mathrm{C}$', '$\mathrm{C}^{1+}$', '$\mathrm{C}^{2+}$',
+                      "$\mathrm{C}^{3+}$", '$\mathrm{C}^{4+}$', '$\mathrm{C}^{5+}$', '$\mathrm{C}^{6+}$' ]
+  # Remove a specific entry (e.g., 'Dataset 1') from the legend and the line
+  handles, labels = ax2.get_legend_handles_labels()
+  filtered_handles = [handle for handle, label in zip(handles, labels)  if label not in labels_to_remove]
+  filtered_labels = [label for label in labels if label not in labels_to_remove]
+
+  ax2.legend(filtered_handles, filtered_labels, loc='lower left', bbox_to_anchor=(0.7, 0.3), ncol=3, frameon=False)
+
+  #plt.gca().add_artist(legend2)
+
+
+  ax2.set_xlim(0.0, 12.5)
+  ax2.set_xlabel('Radius (pc)')
+  ax2.set_ylabel('$\mathrm{Ionisation \, Fraction}$')
+  #axs[1].grid()
+  #ax2.legend(loc='lower left', bbox_to_anchor=(0.15, -0.4), ncol=10)
+  ax2.tick_params(axis='both', which='both', direction='in')
 
 
 # Save images **************************************************************
+  x_minor_locator = MultipleLocator(0.2)  # Set the minor tick interval to 0.2 units
+  ax1.xaxis.set_minor_locator(x_minor_locator)
+
+  # Define the positions for additional minor ticks on the y-axis
+  y_minor_locator = MultipleLocator(1)  # Set the minor tick interval to 0.1 units
+  ax1.yaxis.set_minor_locator(y_minor_locator)
+
+  plt.subplots_adjust(hspace=0.1)
   iy = str(i).zfill(5)
   opf = img_path+"/"+fbase+"."+iy+".png"
   plt.savefig(opf, bbox_inches="tight", dpi=300)
