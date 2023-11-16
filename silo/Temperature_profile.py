@@ -4,7 +4,7 @@ from pypion.argparse_command import InputValues
 from SiloReader import GetSiloData
 from OneDPlotter import Plot_Function
 import numpy as np
-
+import astropy.units as u
 Inputs = InputValues()
 timeline = Inputs.time_dicts
 dimension = Inputs.dimen
@@ -17,7 +17,9 @@ for frame in timeline:
     object = GetSiloData(data)
     basic_data = object.get_basic_data()
 
-    # density = object.get_parameter('Density')
+    time = (basic_data['sim_time'] * u.s).to(u.yr)
+    print(time)
+
     Temperature = object.get_parameter('Temperature')
     log_Temperature = np.log10(Temperature)
     radius = object.get_radial_coordinate()
@@ -31,6 +33,8 @@ for frame in timeline:
     #plt.ylim([0.0, 20000])
     plt.xlim([0, 6])
     # Saving the plot
+    s = "$\mathrm{Time}: $" + f"{time:0.02f}"
+    plt.text(0.0, 0.0, s, color="black", fontsize=14)
     imagefile = "%s%s_%s.png" % (OutputDir, Inputs.img_file, str(imagefile_count).zfill(3))
     plt.savefig(imagefile, bbox_inches='tight', dpi=300)
     print("Saving " + imagefile)

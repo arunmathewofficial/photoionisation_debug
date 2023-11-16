@@ -15,9 +15,9 @@ m_Fe = 9.2732796e-23
 
 #########################################################
 # given data
-print("Given mass density and relative abundance, calculate mass fractions")
+print("Given mass density and relative abundance, calculating mass fractions")
 # number denisty of hydrogen
-rho = 100.0 * m_H       #in units of g/cm^3
+rho = 100.0 * m_H        #in units of g/cm^3
 # relative abundance
 a_He = - 1.0
 a_C  = - 3.6576
@@ -41,12 +41,11 @@ frac_O  = 10**a_O
 frac_Ne = 10**a_Ne
 frac_S  = 10**a_S
 
-# calculating number density of hydrogen.
+# calculating mass density
 n_H = rho / (m_H + m_He*frac_He + m_C*frac_C + m_N*frac_N + m_O*frac_O + m_Ne*frac_Ne + m_S*frac_S)
 
-
-
 print("Hydrogen number density (in log): ", np.log10(n_H))
+print("Mass density (in g/cm^3): ", "{:.5e}".format(rho))
 n_He = frac_He * n_H
 n_C  = frac_C  * n_H
 n_N  = frac_N  * n_H
