@@ -31,7 +31,7 @@ for frame in timeline:
                                          ["radius (cm)", r"${\rm T (K)}$"], [])
     #plt.ylim([-15, -5])
     #plt.ylim([0.0, 20000])
-    plt.xlim([0, 6])
+    #plt.xlim([0, 6])
     # Saving the plot
     s = "$\mathrm{Time}: $" + f"{time:0.02f}"
     plt.text(0.0, 0.0, s, color="black", fontsize=14)

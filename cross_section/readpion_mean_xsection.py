@@ -13,8 +13,9 @@ def read_data(filename):
 
     # Extract labels from the comments
     for line in lines:
-        if line.startswith('#NAME:'):
-            labels = line.split()[2:]  # Splitting by whitespace and removing the '#NAME:' prefix
+        if line.startswith('#ATTRIBUTE LABEL:'):
+            line = line.replace('#ATTRIBUTE LABEL:', '', 1)
+            labels = line.split()[1:]  # Splitting by whitespace and removing the '#NAME:' prefix
             labels = ["Bin_Min"] + labels  # Include "Bin_Min" as the first label
             break
 
@@ -29,6 +30,5 @@ def read_data(filename):
             if label not in data_dict:
                 data_dict[label] = []
             data_dict[label].append(value)
-
 
     return {"species": species, "names": labels, "dict" :data_dict}

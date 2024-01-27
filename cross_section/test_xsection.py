@@ -5,10 +5,10 @@ from readpion_mean_xsection import read_data
 from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
 
 # read the xsection data and return label, species name and data dictionary
-pion_xsection_data = read_data("/home/mathew/Desktop/pion/photoionisation_test/MPV10-photo-tables/mean-photo-xsection.txt")
+pion_xsection_data = read_data("/home/mathew/Desktop/pion/refactor-test/MPV10-Tables/photo-tables/mean-photo-xsection.txt")
 species = np.array(pion_xsection_data['species'])
 # read the weight data and return label, species name and data dictionary
-pion_weight_data = read_data("/home/mathew/Desktop/pion/photoionisation_test/MPV10-photo-tables/bin-weights.txt")
+pion_weight_data = read_data("/home/mathew/Desktop/pion/refactor-test/MPV10-Tables/photo-tables/bin-weights.txt")
 
 # Customize the formatting options
 np.set_printoptions(threshold=np.inf)
@@ -82,7 +82,7 @@ for species in pion_xsection_data["species"]:
 
     plt.tight_layout()  # To prevent overlapping of subplots
     # Show the combined plot
-    image = "/home/mathew/Desktop/pion/photoionisation_test/xsection_plots/xsection_" + species + ".png"
+    image = "/home/mathew/Desktop/pion/refactor-test/xsection/xsection_" + species + ".png"
     print("saving " + image)
     plt.savefig(image, dpi=200)
     plt.close(fig)
